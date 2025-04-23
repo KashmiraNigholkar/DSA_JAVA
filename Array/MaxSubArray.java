@@ -1,4 +1,4 @@
-package DSA_JAVA.Array;
+package Array;
 import java.util.*;
 
 public class MaxSubArray {
