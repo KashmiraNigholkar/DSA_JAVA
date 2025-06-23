@@ -1,36 +1,40 @@
-package ArrayList;
+package Practise;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
-
 public class CollectionSort {
-    public static void swap(final ArrayList<Integer>list,final int idx1, final int idx2){
-        final int temp=list.get(idx1);
-        list.set(idx1,list.get(idx2));
-        list.set(idx2,temp);
+    public ArrayList<Integer> findLoneElements(ArrayList<Integer> nums) {
+        ArrayList<Integer> list = new ArrayList<>();
 
+        if (nums == null || nums.size() == 0)
+            return list;
+
+        Collections.sort(nums);
+
+        int n = nums.size();
+
+        if (n == 1) {
+            list.add(nums.get(0));
+            return list;
+        }
+
+        // Check first element
+        if (nums.get(0) + 1 < nums.get(1)) {
+            list.add(nums.get(0));
+        }
+
+        // Check middle elements
+        for (int i = 1; i < n - 1; i++) {
+            if (nums.get(i - 1) + 1 < nums.get(i) && nums.get(i) + 1 < nums.get(i + 1)) {
+                list.add(nums.get(i));
+            }
+        }
+
+        // Check last element
+        if (nums.get(n - 2) + 1 < nums.get(n - 1)) {
+            list.add(nums.get(n - 1));
+        }
+
+        return list;
     }
-
-    public static void main(final String[] args) {
-        final ArrayList<Integer>list=new ArrayList<>();
-        list.add(2);
-        list.add(5);
-        list.add(3);
-        list.add(9);
-        list.add(3);
-        list.add(6);
-        list.add(5);
-        System.out.println(list);
-        Collections.sort(list);//acsending
-        System.out.println(list);
-
-        //descending
-
-        Collections.sort(list,Collections.reverseOrder());
-        System.out.println(list);
-
-    }
-
-    
 }
