@@ -1,9 +1,6 @@
 package LinkedList;
 
 public class SlowFastApproach {
-   
-
-
 
     // Node class
     public static class Node {
@@ -83,20 +80,18 @@ public class SlowFastApproach {
             }
             return -1;
         }
-    }
-    public Node FindMid(Node head){
-        Node slow=head;
-        Node fast=head;
 
+        // Midpoint finder method
+        public Node findMid() {
+            Node slow = head;
+            Node fast = head;
 
-        while(fast!=null &&fast.next!=null){
-            slow=slow.next;
-            fast=fast.next.next;
-
+            while (fast != null && fast.next != null) {
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            return slow;
         }
-        return slow;
-
-
     }
 
     // Main method
@@ -110,13 +105,7 @@ public class SlowFastApproach {
 
         ll.print();
 
-        // System.out.println("Index of 3: " + ll.itrSearch(3));  // Output should be 2
-     
-        // System.out.println("Index of 10: " + ll.itrSearch(10)); // Output should be -1
-    
-    
+        Node mid = ll.findMid();
+        System.out.println("Middle element: " + mid.data);  // Should print 3
     }
 }
-
-    
-
