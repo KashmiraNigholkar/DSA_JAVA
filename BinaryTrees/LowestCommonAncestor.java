@@ -1,6 +1,7 @@
 package BinaryTrees;
+import java.util.*;
 
-public class SubTreeOfAnothertree {
+public class LowestCommonAncestor {
 
     static class Node {
         int data;
@@ -28,29 +29,23 @@ public class SubTreeOfAnothertree {
         if (root == null) {
             return 0;
         }
-        int leftCount = count(root.left);
-        int rightCount = count(root.right);
-        return leftCount + rightCount + 1;
+        return count(root.left) + count(root.right) + 1;
     }
 
-    // Naive O(N^2) diameter
+    // Naive diameter (O(n^2))
     public static int diameter(Node root) {
-        if (root == null) {
-            return 0;
-        }
-        int leftDiam = diameter(root.left);
-        int rightDiam = diameter(root.right);
-        int leftHt = height(root.left);
-        int rightHt = height(root.right);
-
-        int selfDiam = leftHt + rightHt + 1;
-        return Math.max(selfDiam, Math.max(leftDiam, rightDiam));
+        if (root == null) return 0;
+        int ld = diameter(root.left);
+        int rd = diameter(root.right);
+        int lh = height(root.left);
+        int rh = height(root.right);
+        int selfDiam = lh + rh + 1;
+        return Math.max(selfDiam, Math.max(ld, rd));
     }
 
-    // Optimized O(N) diameter using helper class
+    // Optimized diameter (O(n))
     static class TreeInfo {
-        int height;
-        int diameter;
+        int height, diameter;
 
         public TreeInfo(int height, int diameter) {
             this.height = height;
@@ -59,9 +54,7 @@ public class SubTreeOfAnothertree {
     }
 
     public static TreeInfo optimizedDiameter(Node root) {
-        if (root == null) {
-            return new TreeInfo(0, 0);
-        }
+        if (root == null) return new TreeInfo(0, 0);
 
         TreeInfo left = optimizedDiameter(root.left);
         TreeInfo right = optimizedDiameter(root.right);
@@ -73,33 +66,67 @@ public class SubTreeOfAnothertree {
         return new TreeInfo(height, diameter);
     }
 
-    // Function to check if two trees are identical
+    // Check if two trees are identical
     public static boolean isIdentical(Node node, Node subRoot) {
-        if (node == null && subRoot == null) {
-            return true;
-        }
-        if (node == null || subRoot == null || node.data != subRoot.data) {
-            return false;
-        }
+        if (node == null && subRoot == null) return true;
+        if (node == null || subRoot == null || node.data != subRoot.data) return false;
+
         return isIdentical(node.left, subRoot.left) && isIdentical(node.right, subRoot.right);
     }
 
-    // Function to check if subRoot is a subtree of root
+    // Check if subRoot is a subtree of root
     public static boolean isSubTree(Node root, Node subRoot) {
-        if (root == null) {
-            return false;
-        }
-        if (isIdentical(root, subRoot)) {
-            return true;
-        }
+        if (root == null) return false;
+        if (isIdentical(root, subRoot)) return true;
 
         return isSubTree(root.left, subRoot) || isSubTree(root.right, subRoot);
     }
 
-    // Main method with test example
+    public static void KLevel(Node root, int level, int k) {
+        if (root == null) return;
+        if (level == k) {
+            System.out.print(root.data + " ");
+            return;
+        }
+        KLevel(root.left, level + 1, k);
+        KLevel(root.right, level + 1, k);
+    }
+
+    public static boolean getPath(Node root, int n, ArrayList<Node> path) {
+        if (root == null) return false;
+
+        path.add(root);
+
+        if (root.data == n) return true;
+
+        if (getPath(root.left, n, path) || getPath(root.right, n, path)) {
+            return true;
+        }
+
+        path.remove(path.size() - 1);
+        return false;
+    }
+
+    public static Node lca(Node root, int n1, int n2) {
+        ArrayList<Node> path1 = new ArrayList<>();
+        ArrayList<Node> path2 = new ArrayList<>();
+
+        if (!getPath(root, n1, path1) || !getPath(root, n2, path2)) {
+            return null; // Either node not found
+        }
+
+        int i = 0;
+        while (i < path1.size() && i < path2.size()) {
+            if (path1.get(i) != path2.get(i)) break;
+            i++;
+        }
+
+        return path1.get(i - 1); // Last common node
+    }
+
     public static void main(String[] args) {
         /*
-         * Tree root:
+         * Tree structure:
          *         1
          *       /   \
          *      2     3
@@ -119,16 +146,19 @@ public class SubTreeOfAnothertree {
         System.out.println("Diameter (Naive): " + diameter(root));   // Output: 5
         System.out.println("Diameter (Optimized): " + optimizedDiameter(root).diameter); // Output: 5
 
-        /*
-         * Subtree:
-         *      2
-         *     / \
-         *    4   5
-         */
+        // Subtree:
         Node subRoot = new Node(2);
         subRoot.left = new Node(4);
         subRoot.right = new Node(5);
 
         System.out.println("Is SubTree: " + isSubTree(root, subRoot)); // Output: true
+
+        System.out.print("Nodes at level 2: ");
+        KLevel(root, 1, 2);  // Output: 4 5 6 7
+        System.out.println();
+
+        int n1 = 4, n2 = 5;
+        Node ancestor = lca(root, n1, n2);
+        System.out.println("LCA of " + n1 + " and " + n2 + ": " + (ancestor != null ? ancestor.data : "Not found"));
     }
 }
